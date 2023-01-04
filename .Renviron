@@ -1,7 +1,0 @@
-QUALTRICS_API_KEY = 'AyaGJvWOmlGI1rro4FKtBM7j5S5Z2N2J2d5NO88N'
-QUALTRICS_BASE_URL = 'fra1.qualtrics.com'
-R_USER = 'C:\Users\jcur01\OneDrive - UKRI\R'
-usernameDw = "ro_James_Currer"
-passwordDw = "04mbN7g5K$wE&1gc"
-JAVA_HOME = 'C:\Program Files\Java\jre1.8.0_341'
-PATH = 'C:\Program Files\R\R-4.1.2\bin\x64;C:\Program Files\Python39\Scripts\;C:\Program Files\Python39\;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files (x86)\Sennheiser\SenncomSDK\;C:\Program Files\Git\cmd;C:\Program Files\nodejs\;C:\Program Files (x86)\Java\jre1.8.0_311\bin;C:\Users\jcur01\OneDrive - UKRI\Documents\R\win-library\4.0\rJava\libs\x64'
