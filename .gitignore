@@ -2,3 +2,5 @@
 .Rhistory
 .RData
 .Ruserdata
+.Renviron
+playing_about.R
