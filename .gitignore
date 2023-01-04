@@ -3,4 +3,4 @@
 .RData
 .Ruserdata
 .Renviron
-playing_about.R
+package_development.R
