@@ -1,0 +1,24 @@
+Package: UsefulFunctions
+Title: Innovate UK Functions Package
+Version: 0.0.0.9000
+Authors@R: 
+    person("James", "Currer", , "james.currer@iuk.ukri.org", role = c("aut", "cre"),
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: This package provides useful functions for Innovate UK.
+License: `use_mit_license()`
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports:
+    dplyr,
+    tidyr,
+    tidyverse,
+    readxl,
+    plotly,
+    lubridate,
+    jsonlite,
+    gitcreds,
+    rvest,
+    httr,
+    qualtRics,
+    RODBC
