@@ -13,260 +13,14 @@ rootFolder <- "~/"
 
 # rootFolder <- "C:/Users/jcur01/OneDrive - UKRI/R/"
 
-dataWarehouseFunction <- function(){
-
-  # source("C:/Users/jcur01/OneDrive - UKRI/R/dwCreds.R",
-  #        chdir = T)
-
-  con <- DBI::dbConnect(drv      = RMySQL::MySQL(),
-                        username = Sys.getenv("usernameDw"),
-                        password = Sys.getenv("passwordDw"),
-                        host     = "dw-prod.cluster-csfwpi01op01.eu-west-2.rds.amazonaws.com",
-                        port     = 3306,
-                        dbname   = "dw")
-
-  all_tables <- DBI::dbListTables(con)
-
-  tables <- tibble(name = c("Applications Summaries",
-                            "Application Scores",
-                            "Assessor Comments",
-                            "Application Questions",
-                            "Projects",
-                            "Claims / Forecast",
-                            "Monitoring",
-                            "Competitions",
-                            "Change Requests",
-                            "Trans Data",
-                            "Funders",
-                            "EDI",
-                            "PCF",
-                            "Check Tables"))
-
-  choice <- menu(tables$name)
-
-  tableChoice <- tables$name[choice]
-
-  start <- Sys.time()
-
-  if (tableChoice == "Applications Summaries") {
-
-    print("This could take up to 6 minutes")
-
-
-    applicantTable <- DBI::dbReadTable(con, "vw_Dashboard_IFSApplicant")
-
-    applicationTable <- DBI::dbReadTable(con, "vw_Dashboard_IFSApplication")
-
-    application_id_changes <- DBI::dbReadTable(con, "vw_IFS_ApplicationID_Changes") %>%
-      select(ApplicationID = application_id,
-             previous_application_id) %>%
-      mutate(ApplicationID = as.character(ApplicationID),
-             previous_application_id = as.character(previous_application_id))
-
-    comps <- DBI::dbReadTable(con, "vw_Dashboard_IFSCompetition")
-    compsFunding <- DBI::dbReadTable(con, "vw_Dashboard_IFSCompetitionFunder")
-    compsMilestones <- DBI::dbReadTable(con, "vw_Dashboard_IFSCompetitionMilestone")
-
-    comps_output <- compsMilestones %>%
-      select(CompetitionKey,
-             localDate,
-             type) %>%
-      arrange(desc(localDate)) %>%
-      distinct(CompetitionKey,
-               type,
-               .keep_all = T) %>%
-      pivot_wider(names_from = type,
-                  values_from = localDate) %>%
-      left_join(comps,
-                by = "CompetitionKey") %>%
-      left_join(compsFunding,
-                Joining, by = c("CompetitionKey", "CompetitionID", "CompetitionName"))
-
-    output <- comps_output %>%
-      filter(!CompetitionKey == 0) %>%
-      distinct(CompetitionKey,
-               CompetitionID,
-               CompetitionName,
-               OPEN_DATE) %>%
-      left_join(x = applicationTable,
-                y = .,
-                by = "CompetitionKey") %>%
-      left_join(applicantTable,
-                by = "ApplicationKey") %>%
-      rename(ApplicationID = ApplicationID.x,
-             CompetitionKey = CompetitionKey.x) %>%
-      select(-c(ApplicationID.y,
-                CompetitionKey.y)) %>%
-      mutate(ApplicantKey = as.character(ApplicantKey),
-             ApplicationID = as.character(ApplicationID)) %>%
-      mutate(OPEN_DATE = as.character(OPEN_DATE),
-             OPEN_DATE_clean = str_sub(OPEN_DATE,
-                                       0,
-                                       10),
-             OPEN_DATE_clean = ymd(OPEN_DATE_clean)) %>%
-      left_join(application_id_changes)
-
-    application_data <<- output
-
-  } else if (tableChoice == "Assessor Comments") {
-
-    print("This could take over 25 mins")
-
-    output <- DBI::dbReadTable(con, "vw_IFSAssessorResponse ") %>%
-      mutate(ApplicationID = as.character(ApplicationID))
-
-    assessor_comments <<- output
-
-  } else if (tableChoice == "Application Scores") {
-
-    print("This could take over 25 mins")
-
-    output <- DBI::dbReadTable(con, "vw_IFSAssessorScores_data") %>%
-      mutate(ApplicationID = as.character(ApplicationID))
-
-    application_scores <<- output
-
-  } else if (tableChoice == "Application Questions") {
-
-    print("This could take up to 7 minutes")
-
-    output <- DBI::dbReadTable(con, "vw_IFSApplicationResponses_data") %>%
-      mutate(ApplicationID = as.character(ApplicationID))
-
-    application_questions <<- output
-
-  } else if (tableChoice == "Spend and Forecast") {
-
-    print("This could take up to 4 minutes")
-    output <- DBI::dbReadTable(con, "vw_Dashboard_ProjectParticipantPeriodLevel")
-    spend_forecast <<- output
-
-  } else if (tableChoice == "Projects") {
-
-    print("This could take up to 2 minutes")
-
-    projectTable <- DBI::dbReadTable(con, "vw_Dashboard_IFSPA_Project")
-
-    participantTable <- DBI::dbReadTable(con, "vw_Dashboard_IFSPA_ProjectParticipant")
-
-    output <- projectTable %>%
-      # select(-IsOkToPublish) %>%
-      left_join(participantTable,
-                by = "ProjectNumber") %>%
-      select(-contains(".y"))
-
-    names(output) <- gsub("\\.x", "", names(output))
-
-    projects_data <<- output
-
-  } else if (tableChoice == "Monitoring") {
-
-    print("This could take up to 2 minutes")
-
-    output <- DBI::dbReadTable(con, "vw_Dashboard_IFSPA_MonitoringData")
-
-    monitoring_data <<- output
-
-  } else if (tableChoice == "Competitions") {
-
-    print("This could take up to a minute")
-
-    comps <- DBI::dbReadTable(con, "vw_Dashboard_IFSCompetition")
-    compsFunding <- DBI::dbReadTable(con, "vw_Dashboard_IFSCompetitionFunder")
-    compsMilestones <- DBI::dbReadTable(con, "vw_Dashboard_IFSCompetitionMilestone")
-
-    output <- compsMilestones %>%
-      select(CompetitionKey,
-             localDate,
-             type) %>%
-      arrange(desc(localDate)) %>%
-      distinct(CompetitionKey,
-               type,
-               .keep_all = T) %>%
-      pivot_wider(names_from = type,
-                  values_from = localDate) %>%
-      left_join(comps,
-                by = "CompetitionKey") %>%
-      left_join(compsFunding,
-                Joining, by = c("CompetitionKey", "CompetitionID", "CompetitionName"))
-
-    comps_data <<- output
-
-  } else if (tableChoice == "Change Requests") {
-
-    print("This could take up to a minute")
-
-    output <- DBI::dbReadTable(con, "vw_Dashboard_IFSPA_ProjectChangeRequest")
-
-    change_request_data <<- output
-
-  } else if (tableChoice == "Trans Data") {
-
-    print("This could take up to a minute")
-
-    # output <- DBI::dbReadTable(con, "vw_report_publictransparencydata")
-    output <- DBI::dbReadTable(con, "mv_report_publictransparencydata") %>%
-      mutate(ProjectNumber = as.character(ProjectNumber))
-
-    trans_data <<- output
-
-  } else if (tableChoice == "Funders") {
-
-    print("This could take up to a minute")
-
-    output <- DBI::dbReadTable(con, "vw_funderspanel_data")
-
-    funders_data <<- output
-
-  } else if (tableChoice == "Claims / Forecast") {
-
-    print("This could take up to 5 minutes")
-
-    output <- DBI::dbReadTable(con, "vw_Dashboard_ProjectParticipantPeriodLevel")
-
-    claims_forecast_data <<- output
-
-  } else if (tableChoice == "EDI") {
-
-    print("This could take up to a minutes")
-
-    output <- DBI::dbReadTable(con, "vw_Sensitive_EDIData_JC")
-    question_id <- read_csv("C:/Users/jcur01/OneDrive - UKRI/R/dataWarehouse/edi_questions_id.csv")
-    output <- output %>%
-      left_join(question_id)
-
-    edi_data <<- output
-
-  } else if (tableChoice == "EDI Survey Monkey") {
-
-    print("This could take up to a minutes")
-
-    output <- DBI::dbReadTable(con, "vw_Sensitive_EDIData_JC")
-    question_id <- read_csv("C:/Users/jcur01/OneDrive - UKRI/R/dataWarehouse/edi_questions_id.csv")
-    output <- output %>%
-      left_join(question_id)
-
-    edi_data <<- output
-
-  } else if (tableChoice == "PCF") {
-
-    print("This could take up to a minutes")
-
-    output <- DBI::dbReadTable(con, "mv_iuk_projectcompletionform")
-
-    pcf_data <<- output
-
-  } else if (tableChoice == "Check Tables") {
-
-    print(all_tables)
-  }
-
-  end <- Sys.time()
-  print(end-start)
-
-}
-
-
+#' Data Warehouse Function
+#'
+#' @param table_choice is the data warehouse table we want to return, leaving this blank will return the available tables in the console
+#'
+#' @return a data frame
+#' @export
+#'
+#' @examples dataWarehouse_function_specific("Application Summaries")
 dataWarehouse_function_specific <- function(table_choice = "Tables"){
 
   # source("C:/Users/jcur01/OneDrive - UKRI/R/dwCreds.R",
@@ -527,6 +281,12 @@ core <- c("Collaborative R&D",
 
 ### trans data function ####
 
+#' Transparency Data Function
+#'
+#' @return the latest version of our published transparency data set 
+#' @export
+#'
+#' @examples transDataFunction()
 transDataFunction <- function() {
   link <- read_html("https://www.ukri.org/publications/innovate-uk-funded-projects-since-2004/") %>%
     html_nodes("a") %>%
@@ -592,9 +352,20 @@ transDataFunction <- function() {
 
 }
 
-### sic code function ####
+### companies house function ####
 
-sic_code_function <- function(crn_list){
+#' Companies House Data
+#'
+#' @param crn_list is a tibble of companies house reference numbers
+#'
+#' @return a tibble containing information from the companies houe API 
+#' @export
+#'
+#' @examples 
+#' crn_list <- data %>%
+#'     distinct(crn)
+#' companies_house_function(crn_list = crn_list)
+companies_house_function <- function(crn_list){
   apiKey <- "V5ZW_NIGIu0ZAgw2n7YX28JFhBrN_oljEafaDSBX"
   if(exists("co_ho_api_output") == T){
     rm(co_ho_api_output)
