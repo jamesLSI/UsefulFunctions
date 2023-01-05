@@ -277,7 +277,7 @@ transDataFunction <- function() {
     str_extract('^http.+lsx$') %>%
     .[which(!is.na(.))]
 
-  GET(link[[1]], write_disk(tf <- tempfile(fileext = ".xlsx")))
+  httr::GET(link[[1]], write_disk(tf <- tempfile(fileext = ".xlsx")))
 
   namesFunction <- function(nms) janitor::make_clean_names(nms, case = "upper_camel")
 
@@ -366,7 +366,7 @@ companies_house_function <- function(crn_list){
 
   for (i in 1:nrow(crn_list)) {
     try({
-      apiReturn <- GET(url = paste0("https://api.companieshouse.gov.uk/company/", crn_list[i,1]),
+      apiReturn <- httr::GET(url = paste0("https://api.companieshouse.gov.uk/company/", crn_list[i,1]),
                        authenticate(user = Sys.getenv("co_ho_api_key"), password = ""))
       apiJson <- suppressMessages(jsonlite::fromJSON(content(apiReturn, "text")))
       apiJson <- as.data.frame(unlist(apiJson)) %>%
@@ -421,7 +421,7 @@ co_ho_officers_function <- function(crn_list){
   }
   for (i in 1:nrow(crn_list)) {
     try({
-      apiReturn <- GET(url = paste0("https://api.companieshouse.gov.uk/company/", crn_list[i,1], "/officers"),
+      apiReturn <- httr::GET(url = paste0("https://api.companieshouse.gov.uk/company/", crn_list[i,1], "/officers"),
                        authenticate(user = Sys.getenv("co_ho_api_key"), password = ""))
       apiJson <- suppressMessages(jsonlite::fromJSON(content(apiReturn, "text")))
       apiJson <- as.data.frame(unlist(apiJson)) %>%
@@ -469,7 +469,7 @@ co_ho_signif_control_function <- function(crn_list){
   }
   for (i in 1:nrow(crn_list)) {
     try({
-      apiReturn <- GET(url = paste0("https://api.companieshouse.gov.uk/company/", crn_list[i,1], "/persons-with-significant-control"),
+      apiReturn <- httr::GET(url = paste0("https://api.companieshouse.gov.uk/company/", crn_list[i,1], "/persons-with-significant-control"),
                        authenticate(user = Sys.getenv("co_ho_api_key"), password = ""))
       apiJson <- suppressMessages(jsonlite::fromJSON(content(apiReturn, "text")))
       apiJson <- as.data.frame(unlist(apiJson)) %>%
@@ -526,7 +526,7 @@ co_ho_charges_function <- function(crn_list){
   
   for (i in 1:nrow(crn_list)) {
     try({
-      apiReturn <- GET(url = paste0("https://api.companieshouse.gov.uk/company/", crn_list[i,1], "/charges"),
+      apiReturn <- httr::GET(url = paste0("https://api.companieshouse.gov.uk/company/", crn_list[i,1], "/charges"),
                        authenticate(user = Sys.getenv("co_ho_api_key"), password = ""))
       apiJson <- suppressMessages(jsonlite::fromJSON(content(apiReturn, "text")))
       apiJson <- as.data.frame(unlist(apiJson)) %>% 
@@ -583,7 +583,7 @@ postcode_function <- function(post_code_list){
 
       postcodesForApi <- gsub(" ", "", postcodesForApi)
 
-      apiReturn <- GET(url = paste0("https://api.postcodes.io/postcodes/", postcodesForApi))
+      apiReturn <- httr::GET(url = paste0("https://api.postcodes.io/postcodes/", postcodesForApi))
       apiJson <- suppressMessages(jsonlite::fromJSON(content(apiReturn, "text")))
       apiJson <- as.data.frame(unlist(apiJson)) %>%
         rename(value = "unlist(apiJson)")
