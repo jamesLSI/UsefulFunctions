@@ -277,7 +277,7 @@ transDataFunction <- function() {
     str_extract('^http.+lsx$') %>%
     .[which(!is.na(.))]
 
-  httr::GET(link[[1]], write_disk(tf <- tempfile(fileext = ".xlsx")))
+  httr::GET(link[[1]], httr::write_disk(tf <- tempfile(fileext = ".xlsx")))
 
   namesFunction <- function(nms) janitor::make_clean_names(nms, case = "upper_camel")
 
