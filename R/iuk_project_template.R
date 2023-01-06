@@ -39,6 +39,6 @@ iuk_project_template <- function(path, ...) {
   
   # write .Renviron
   file.copy(from = "~/.Renviron",
-            to = paste0(path,".Renviron"))
+            to = file.path(path,".Renviron"))
   
 }
