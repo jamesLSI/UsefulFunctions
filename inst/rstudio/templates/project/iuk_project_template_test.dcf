@@ -1,6 +1,6 @@
-Binding: iuk_project_template
-Title: IUK Project Template
-OpenFiles: INDEX
+Binding: iuk_project_template_test
+Title: IUK Project Template Test
+OpenFiles: 
 
 Parameter: check
 Widget: CheckboxInput
