@@ -1,28 +1,4 @@
 Binding: iuk_project_template
 Title: IUK Project Template
-OpenFiles: INDEX
+OpenFiles: 
 
-Parameter: check
-Widget: CheckboxInput
-Label: Checkbox Input
-Default: On
-Position: left
-
-Parameter: select
-Widget: SelectInput
-Label: Select Input
-Fields: Field A, Field B, Field C
-Default: Field B
-Position: left
-
-Parameter: text
-Widget: TextInput
-Label: Text Input
-Default: Hello, world!
-Position: right
-
-Parameter: file
-Widget: FileInput
-Label: File Input
-Default: ~/.Renviron
-Position: right
