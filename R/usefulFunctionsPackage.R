@@ -694,5 +694,3 @@ survey_questions_function <- function(){
 
 
 }
-
-this is a new line
