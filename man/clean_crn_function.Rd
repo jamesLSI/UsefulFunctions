@@ -22,7 +22,7 @@ crn_list <- trans_data \%>\%
 clean_crn_function(crn_list)
 
 or atomic vector 
-clean_crn_trans_data <- clean_crn_trans_data \%>\% 
+clean_crn_trans_data <- trans_data \%>\% 
     mutate(clean_crn = clean_crn_function(Crn)) 
 
 }
