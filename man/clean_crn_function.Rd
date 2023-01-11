@@ -7,7 +7,7 @@
 clean_crn_function(crn_list)
 }
 \arguments{
-\item{crn_list}{is a tibble where the first column is crns}
+\item{crn_list}{can be a tibble where the first column is crns or an atomic vector}
 }
 \value{
 a tibble with original and cleansed crns
@@ -16,7 +16,13 @@ a tibble with original and cleansed crns
 CRN Cleansing Fucntion
 }
 \examples{
+as tibble
 crn_list <- trans_data \%>\% 
     distinct(Crn)
 clean_crn_function(crn_list)
+
+or atomic vector 
+clean_crn_trans_data <- clean_crn_trans_data \%>\% 
+    mutate(clean_crn = clean_crn_function(Crn)) 
+
 }
