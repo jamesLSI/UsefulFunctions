@@ -1,8 +1,8 @@
-#' Normalise Univeristy Names Function
+#' Normalise University Names Function
 #'
 #' @param uni_name_list is a tibble with the first column university names or an atomic vector
 #'
-#' @return a tibble called noramlised_uni_name_list with original and normalised names or a mutated atomic vector
+#' @return a tibble called normalised_uni_name_list with original and normalised names or a mutated atomic vector
 #' @export
 #'
 #' @examples
@@ -79,7 +79,7 @@ normalise_university_name_function <- function(uni_name_list) {
       # Birkbeck
       mutate(uni_name_clean = str_replace(uni_name_clean,"UNIVERSITY BIRKBECK","BIRKBECK"))
     
-    noramlised_uni_name_list <<- clean_name_list
+    normalised_uni_name_list <<- clean_name_list
   } else {
     
     return(uni_name_list %>%

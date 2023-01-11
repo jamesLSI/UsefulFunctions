@@ -1,4 +1,4 @@
-#' CRN Cleansing Fucntion
+#' CRN Cleansing Function
 #'
 #' @param crn_list can be a tibble where the first column is crns or an atomic vector
 #'
@@ -25,13 +25,13 @@ clean_crn_function <- function(crn_list) {
       # 6 digits
       mutate(clean_crn = str_replace(crn, "^(\\d{6})$", "00\\1")) %>%
       # 7 digits
-      mutate(clean_crn = str_replace(crn, "^(\\d{7})$", "0\\1")) %>%
+      mutate(clean_crn = str_replace(clean_crn, "^(\\d{7})$", "0\\1")) %>%
       # IP withour trailing R
-      mutate(clean_crn = str_replace(crn, "^IP(\\d{5})$", "IP\\1R")) %>%
+      mutate(clean_crn = str_replace(clean_crn, "^IP(\\d{5})$", "IP\\1R")) %>%
       # two letter four digits
-      mutate(clean_crn = str_replace(crn, "^([A-Z]{2})(\\d{4})$", "\\100\\2")) %>%
+      mutate(clean_crn = str_replace(clean_crn, "^([A-Z]{2})(\\d{4})$", "\\100\\2")) %>%
       # two letters five digits
-      mutate(clean_crn = str_replace(crn, "^([A-Z]{2})(\\d{5})$", "\\10\\2"))
+      mutate(clean_crn = str_replace(clean_crn, "^([A-Z]{2})(\\d{5})$", "\\10\\2"))
     
     clean_crn_list <<- cleansed
     
