@@ -1,10 +1,9 @@
-# function to tidy up CRNs
-
 #' CRN Cleansing Fucntion
 #'
 #' @param crn_list is a tibble where the first column is crns
 #'
 #' @return a tibble with original and cleansed crns
+#' @export
 #'
 #' @examples
 #' crn_list <- trans_data %>% 

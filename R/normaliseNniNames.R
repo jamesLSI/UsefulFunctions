@@ -1,13 +1,9 @@
-# function to normalise university and college names so that fuzzy 
-# matching works
-# this is to avoid "bath university" matching "bath spa university" 
-# rather than "the university of bath"
-
 #' Normalise Univeristy Names Function
 #'
 #' @param uni_name_list is a tibble with the first column university names 
 #'
 #' @return a tibble called noramlised_uni_name_list with original and normalised names
+#' @export
 #'
 #' @examples
 #' uni_name_list <- trans_data %>% 
