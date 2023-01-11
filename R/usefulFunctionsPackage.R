@@ -31,7 +31,7 @@ dataWarehouse_function_specific <- function(table_choice = "Tables"){
     con <- DBI::dbConnect(drv      = RMySQL::MySQL(),
                         username = Sys.getenv("usernameDw"),
                         password = Sys.getenv("passwordDw"),
-                        host     = "dw-prod.cluster-csfwpi01op01.eu-west-2.rds.amazonaws.com",
+                        host     = Sys.getenv("dwUrl"),
                         port     = 3306,
                         dbname   = "dw")
 
