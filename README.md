@@ -4,4 +4,4 @@ This package contains a number of useful functions to save time and ensure consi
 
 Functions include:
 
--namesFunction
+- namesFunction
