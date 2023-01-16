@@ -2,7 +2,7 @@
 % Please edit documentation in R/normaliseUniNames.R
 \name{normalise_university_name_function}
 \alias{normalise_university_name_function}
-\title{Normalise Univeristy Names Function}
+\title{Normalise University Names Function}
 \usage{
 normalise_university_name_function(uni_name_list)
 }
@@ -10,10 +10,10 @@ normalise_university_name_function(uni_name_list)
 \item{uni_name_list}{is a tibble with the first column university names or an atomic vector}
 }
 \value{
-a tibble called noramlised_uni_name_list with original and normalised names or a mutated atomic vector
+a tibble called normalised_uni_name_list with original and normalised names or a mutated atomic vector
 }
 \description{
-Normalise Univeristy Names Function
+Normalise University Names Function
 }
 \examples{
 for tibble

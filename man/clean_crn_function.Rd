@@ -2,7 +2,7 @@
 % Please edit documentation in R/crnCleanse.R
 \name{clean_crn_function}
 \alias{clean_crn_function}
-\title{CRN Cleansing Fucntion}
+\title{CRN Cleansing Function}
 \usage{
 clean_crn_function(crn_list)
 }
@@ -13,7 +13,7 @@ clean_crn_function(crn_list)
 a tibble with original and cleansed crns
 }
 \description{
-CRN Cleansing Fucntion
+CRN Cleansing Function
 }
 \examples{
 as tibble
