@@ -8,6 +8,7 @@ Description: This package provides useful functions for Innovate UK.
 License: `use_mit_license()`
 Depends:
     dplyr,
+    httr,
     lubridate,
     plotly,
     purrr,
