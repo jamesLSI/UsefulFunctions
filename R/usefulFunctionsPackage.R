@@ -584,7 +584,7 @@ postcode_function <- function(post_code_list){
       postcodesForApi <- gsub(" ", "", postcodesForApi)
 
       apiReturn <- httr::GET(url = paste0("https://api.postcodes.io/postcodes/", postcodesForApi))
-      apiJson <- suppressMessages(jsonlite::fromJSON(content(apiReturn, "text")))
+      apiJson <- suppressMessages(jsonlite::fromJSON(httr::content(apiReturn, "text")))
       apiJson <- as.data.frame(unlist(apiJson)) %>%
         rename(value = "unlist(apiJson)")
       apiJson <- jsonlite::flatten(apiJson) %>%
