@@ -690,7 +690,7 @@ survey_questions_function <- function(){
 
   survey_questions_output <- qualtRics::survey_questions(surveyID = pcf)
 
-  survey_questions <<- survey_questions_output
+  survey_questions_output <<- survey_questions_output
 
 
 }
