@@ -287,6 +287,9 @@ transDataFunction <- function() {
     mutate(AddressRegion = if_else(AddressRegion == "Yorkshire and the Humber",
                                    "Yorkshire and The Humber",
                                    AddressRegion)) %>%
+    mutate(EnterpriseSize = if_else(EnterpriseSize == "Micro/small",
+                                    "Micro/Small",
+                                    EnterpriseSize)) %>% 
     mutate(EnterpriseSizeClean = if_else(EnterpriseSize %in% c("Start-Up",
                                                                "Sole Trader",
                                                                "Micro/Small",
