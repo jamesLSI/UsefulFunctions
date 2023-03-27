@@ -18,7 +18,9 @@ Depends:
     readxl,
     stringr,
     tibble,
-    tidyr
+    tidyr,
+    DBI,
+    RMySQL
 Imports:
     dplyr,
     gitcreds,
@@ -34,7 +36,9 @@ Imports:
     rvest,
     stringr,
     tibble,
-    tidyr
+    tidyr,
+    DBI,
+    RMySQL
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

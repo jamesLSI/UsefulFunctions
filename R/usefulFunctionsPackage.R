@@ -49,8 +49,7 @@ dataWarehouse_function_specific <- function(table_choice = "Tables"){
                                     "Trans Data",
                                     "Funders",
                                     "EDI",
-                                    "Warehouse",
-                                    "Check Tables"))
+                                    "Warehouse"))
   start <- Sys.time()
 
   if (table_choice == "Applications Summaries") {
