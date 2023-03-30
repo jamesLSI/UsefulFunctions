@@ -264,6 +264,9 @@ dataWarehouse_function_specific <- function(table_choice = "Tables"){
 ### trans data function ####
 
 #' Transparency Data Function
+#' Pre-processing includes: normalising Enterprise Sizes, adding a Enterprise Class,
+#' normalising Address Region names, separating LEPs where a participant is in two, 
+#' and the removal of wirhtdrawn projects and participants
 #'
 #' @return the latest version of our published transparency data set 
 #' @export

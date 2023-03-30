@@ -4,5 +4,5 @@
 .Ruserdata
 .Renviron
 package_development.R
-core_definition.xlsx
 package_development_data.R
+product_groups.xlsx
