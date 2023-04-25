@@ -699,3 +699,74 @@ survey_questions_function <- function(){
 
 
 }
+
+
+
+
+### companies House appointments survey questions function ####
+
+#' Companies House Appointments
+#'
+#' @return a tibble of appointments for a selection of officers
+#' @export
+#'
+#' @examples
+#' Requires a tibble with the officer's appointments links and a generated id column
+#' officer_list <- test %>% 
+#'  filter(str_detect(rowname,
+#'                  "items.links.officer.appointments|items.name")) %>% 
+#'  mutate(id = if_else(rowname %in% c("items.name","items.links.officer.appointments"),
+#'                      1,
+#'                      parse_number(str_remove_all(rowname,
+#'                                                  "[:punct:]")))) %>%
+#'  mutate(variable = if_else(str_detect(rowname,
+#'                                       "items.name"),
+#'                            "name",
+#'                            if_else(str_detect(rowname,
+#'                                               "items.links.officer.appointments"),
+#'                                    "appointments",
+#'                                    "error"))) %>% 
+#'  select(-rowname) %>% 
+#'  pivot_wider(names_from = variable,
+#'              values_from = value) %>% 
+#'  mutate(officer_id = str_remove_all(appointments,
+#'                                     "/officers/|/appointments")) %>% 
+#'  distinct(officer_id,
+#'           .keep_all = T)
+#'           
+#' co_ho_appointments_function(officer_list)
+co_ho_appointments_function <- function (officer_list) 
+{
+  if (exists("api_output_officer") == T) {
+    rm(co_ho_api_output)
+  }
+  for (i in 1:nrow(officer_list)) {
+    try({
+      apiReturn <- httr::GET(url = paste0("https://api.companieshouse.gov.uk/", 
+                                          officer_list$appointments[i]), 
+                             authenticate(user = Sys.getenv("co_ho_api_key"), 
+                                          password = ""))
+      apiJson <- suppressMessages(jsonlite::fromJSON(content(apiReturn, 
+                                                             "text")))
+      apiJson <- as.data.frame(unlist(apiJson)) %>% rename(value = "unlist(apiJson)")
+      apiJson <- jsonlite::flatten(apiJson) %>% rownames_to_column() %>% 
+        mutate(officer = officer_list$officer_id[i])
+      if (exists("api_output_officer") == F) {
+        api_output_officer <- apiJson
+      }
+      else {
+        api_output_officer <- bind_rows(api_output_officer, 
+                                        apiJson)
+      }
+      if (i%%600 == 0) {
+        Sys.sleep(301)
+      }
+      else if (i%%100 == 0) {
+        print(i)
+      }
+    })
+    rm(apiJson, apiReturn)
+  }
+  return(api_output_officer)
+  co_ho_output_officer_appoints <<- api_output_officer
+}

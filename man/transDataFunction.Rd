@@ -2,7 +2,10 @@
 % Please edit documentation in R/usefulFunctionsPackage.R
 \name{transDataFunction}
 \alias{transDataFunction}
-\title{Transparency Data Function}
+\title{Transparency Data Function
+Pre-processing includes: normalising Enterprise Sizes, adding a Enterprise Class,
+normalising Address Region names, separating LEPs where a participant is in two,
+and the removal of wirhtdrawn projects and participants}
 \usage{
 transDataFunction()
 }
@@ -11,6 +14,9 @@ the latest version of our published transparency data set
 }
 \description{
 Transparency Data Function
+Pre-processing includes: normalising Enterprise Sizes, adding a Enterprise Class,
+normalising Address Region names, separating LEPs where a participant is in two,
+and the removal of wirhtdrawn projects and participants
 }
 \examples{
 transDataFunction()
