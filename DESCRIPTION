@@ -1,6 +1,6 @@
 Package: UsefulFunctions
 Title: Innovate UK Functions Package
-Version: 0.0.0.9000
+Version: 1.0
 Authors@R: 
     person("James", "Currer", , "james.currer@iuk.ukri.org", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
