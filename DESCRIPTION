@@ -7,6 +7,7 @@ Authors@R:
 Description: This package provides useful functions for Innovate UK.
 License: `use_mit_license()`
 Depends:
+    DBI,
     dplyr,
     httr,
     lubridate,
@@ -16,12 +17,12 @@ Depends:
     R (>= 2.10),
     readr,
     readxl,
+    RMySQL,
     stringr,
     tibble,
-    tidyr,
-    DBI,
-    RMySQL
+    tidyr
 Imports:
+    DBI,
     dplyr,
     gitcreds,
     httr,
@@ -32,13 +33,12 @@ Imports:
     qualtRics,
     readr,
     readxl,
+    RMySQL,
     RODBC,
     rvest,
     stringr,
     tibble,
-    tidyr,
-    DBI,
-    RMySQL
+    tidyr
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
