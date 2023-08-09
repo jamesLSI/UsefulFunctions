@@ -49,6 +49,7 @@ dataWarehouse_function_specific <- function(table_choice = "Tables"){
                                     "Trans Data",
                                     "Funders",
                                     "EDI",
+                                    "PCF",
                                     "Warehouse"))
   start <- Sys.time()
 
