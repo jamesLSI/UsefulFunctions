@@ -311,6 +311,7 @@ transDataFunction <- function() {
                                                          EnterpriseSize)))) %>%
     mutate(EnterpriseClass = if_else(EnterpriseSizeClean %in% c("Micro/Small",
                                                                 "Medium",
+                                                                "SME",
                                                                 "Large"),
                                      "Business",
                                      "Other")) %>%
