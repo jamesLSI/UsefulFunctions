@@ -856,4 +856,20 @@ lm_summary_table_function <- function(summary_table){
   
 }
 
+### update useful functions function ####
 
+#' update usefulfunctions
+#'
+#' @return the lastest version of the package installed from github
+#' @export
+#'
+#' @examples
+#' Will overwrite current installed version but will not update out of date dependancies
+#' update_useful_functions()
+update_useful_functions <- function(){
+  
+  detach("package:UsefulFunctions", unload=TRUE)
+  devtools::install_github("jamesLSI/UsefulFunctions",
+                           force = TRUE,
+                           upgrade = "never")
+}
