@@ -867,9 +867,15 @@ lm_summary_table_function <- function(summary_table){
 #' Will overwrite current installed version but will not update out of date dependancies
 #' update_useful_functions()
 update_useful_functions <- function(){
+<<<<<<< HEAD
   
   detach("package:UsefulFunctions", unload=TRUE)
   devtools::install_github("jamesLSI/UsefulFunctions",
                            force = TRUE,
                            upgrade = "never")
+=======
+devtools::install_github("jamesLSI/UsefulFunctions",
+                         force = TRUE,
+                         upgrade = "never")
+>>>>>>> 7e2316dbbccc09f5a703556d70755ea4cf1d6540
 }
