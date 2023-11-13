@@ -364,7 +364,7 @@ companies_house_function <- function(crn_list){
   crn_list <- crn_list %>%
     rename(company_number = 1) %>%
     rowwise() %>%
-    mutate(missing_zeros = 8-nchar(company_number)) %>%
+    mutate(missing_zeros = max(8 - nchar(company_number),0)) %>%
     mutate(add_on = strrep("0",
                            missing_zeros)) %>%
     mutate(Company_number_clean = paste0(add_on,
