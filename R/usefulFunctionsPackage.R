@@ -332,10 +332,10 @@ transDataFunction <- function() {
                                                 "London",
                                                 AddressLep)))) %>%
     mutate(ProjectNumber = as.character(ProjectNumber)) %>%
-    filter(!ProjectStatus == "Withdrawn",
-           ParticipantWithdrawnFromProject == "Active") #%>%
-    #rename("GrantOffered" = "AwardOffered")
-
+    filter(!ProjectStatus == "Withdrawn") %>% 
+    filter(!str_detect(ParticipantWithdrawnFromProject,
+                      "Withdrawn"))
+  
   rm(link, tf)
 
   trans_data <<- transData
