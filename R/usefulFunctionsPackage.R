@@ -810,6 +810,7 @@ lm_summary_table_function <- function(summary_table){
                            names = c("f","s","t","fo","fi","si","se","ei","ni","te"),
                            delim = "&",
                            too_few = "align_start") %>% 
+      slice(2L) %>% 
       pivot_longer(1:ncol(.)) %>% 
       filter(!is.na(value)) %>% 
       select(variable = value,
@@ -826,7 +827,8 @@ lm_summary_table_function <- function(summary_table){
                   tibble() %>%
                   rename(variable = 1) %>% 
                   filter(!variable %in% c("~",
-                                          "values")))
+                                          "values")) %>% 
+                  slice(2L))
     
   }
   
@@ -855,6 +857,7 @@ lm_summary_table_function <- function(summary_table){
   return(output)
   
 }
+
 
 ### update useful functions function ####
 
