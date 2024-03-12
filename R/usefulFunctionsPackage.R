@@ -274,18 +274,23 @@ dataWarehouse_function_specific <- function(table_choice = "Tables"){
 #'
 #' @examples transDataFunction()
 transDataFunction <- function() {
+  namesFunction <- function(nms) janitor::make_clean_names(nms, case = "upper_camel")
+  
   link <- rvest::read_html("https://www.ukri.org/publications/innovate-uk-funded-projects-since-2004/") %>%
     rvest::html_nodes("a") %>%
     rvest::html_attr("href") %>%
     str_extract('^http.+lsx$') %>%
     .[which(!is.na(.))]
-
+  
   httr::GET(link[[1]], httr::write_disk(tf <- tempfile(fileext = ".xlsx")))
-
-  namesFunction <- function(nms) janitor::make_clean_names(nms, case = "upper_camel")
-
-  transData <- read_excel(tf, .name_repair = namesFunction)
-
+  transData1 <- read_excel(tf, .name_repair = namesFunction)
+  
+  httr::GET(link[[2]], httr::write_disk(tf <- tempfile(fileext = ".xlsx")))
+  transData2 <- read_excel(tf, .name_repair = namesFunction)
+  
+  transData <- transData1 %>% 
+    bind_rows(transData2)
+  
   transData <- transData %>%
     mutate(AddressRegion = if_else(AddressRegion == "Yorkshire and the Humber",
                                    "Yorkshire and The Humber",
@@ -333,13 +338,13 @@ transDataFunction <- function() {
                                                 AddressLep)))) %>%
     mutate(ProjectNumber = as.character(ProjectNumber)) %>%
     filter(!ProjectStatus == "Withdrawn") #%>% 
-    # filter(!str_detect(ParticipantWithdrawnFromProject,
-    #                   "Withdrawn"))
+  # filter(!str_detect(ParticipantWithdrawnFromProject,
+  #                   "Withdrawn"))
   
   rm(link, tf)
-
+  
   trans_data <<- transData
-
+  
 }
 
 ### companies house function ####
