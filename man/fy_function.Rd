@@ -4,7 +4,7 @@
 \alias{fy_function}
 \title{Fiscal Year Function}
 \usage{
-fy_function(.data, date_field)
+fy_function(.data, new_col, date_field)
 }
 \arguments{
 \item{.data}{is a dataframe}
@@ -19,5 +19,5 @@ Fiscal Year Function
 }
 \examples{
 data_With_fy <- data_frame \%>\% 
-  mutate(fy_function(.,date_field = To))
+  mutate(fy_function(., new_col = fy_to, date_field = To))
 }
