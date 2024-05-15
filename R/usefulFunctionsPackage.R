@@ -880,3 +880,20 @@ update_useful_functions <- function(){
                            force = TRUE,
                            upgrade = "never")
 }
+
+### clipboard function ####
+
+#' Copy data table to the clipboard
+#'
+#' @return data table to the clipboard
+#' @export
+#'
+#' @examples
+#' Will copy the data table output from a script to the clipboard
+#' data %m%
+#'  clipboard_it()
+clipboard_it <- function(data){
+  
+  write.table(data, "clipboard", sep="\t", row.names=FALSE)
+  
+}
