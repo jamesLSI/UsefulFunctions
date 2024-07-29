@@ -340,9 +340,15 @@ transDataFunction <- function() {
                                                 "London",
                                                 AddressLep)))) %>%
     mutate(ProjectNumber = as.character(ProjectNumber)) %>%
-    filter(!ProjectStatus == "Withdrawn") #%>% 
-  # filter(!str_detect(ParticipantWithdrawnFromProject,
-  #                   "Withdrawn"))
+    filter(!ProjectStatus == "Withdrawn") %>% 
+    distinct(ProjectNumber,
+             ParticipantName,
+             ProjectStatus,
+             Crn,
+             ProjectStartDate,
+             EnterpriseSize,
+             EnterpriseSizeClean,
+             EnterpriseClass)
   
   rm(link, tf)
   
