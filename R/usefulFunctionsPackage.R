@@ -288,10 +288,10 @@ transDataFunction <- function() {
   httr::GET(link[[2]], httr::write_disk(tf <- tempfile(fileext = ".xlsx")))
   transData2 <- read_excel(tf, .name_repair = namesFunction)
   
-  transData <- transData1 %>% 
+  transData_raw <- transData1 %>% 
     bind_rows(transData2)
   
-  transData <- transData %>%
+  transData <- transData_raw %>%
     mutate(AddressRegion = if_else(AddressRegion == "Yorkshire and the Humber",
                                    "Yorkshire and The Humber",
                                    AddressRegion)) %>%
@@ -341,14 +341,12 @@ transDataFunction <- function() {
                                                 AddressLep)))) %>%
     mutate(ProjectNumber = as.character(ProjectNumber)) %>%
     filter(!ProjectStatus == "Withdrawn") %>% 
-    distinct(ProjectNumber,
+    distinct(CompetitionReference,
+             ProjectNumber,
              ParticipantName,
              ProjectStatus,
              Crn,
-             ProjectStartDate,
-             EnterpriseSize,
-             EnterpriseSizeClean,
-             EnterpriseClass)
+             AwardOffered)
   
   rm(link, tf)
   
