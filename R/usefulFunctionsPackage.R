@@ -346,7 +346,8 @@ transDataFunction <- function() {
              ParticipantName,
              ProjectStatus,
              Crn,
-             AwardOffered)
+             AwardOffered,
+             .keep_all = T)
   
   rm(link, tf)
   
