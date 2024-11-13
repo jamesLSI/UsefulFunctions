@@ -329,6 +329,10 @@ transDataFunction <- function() {
                                                                                        "PSRE"),
                                                                  "Public Sector",
                                                                  EnterpriseSize))))) %>%
+    mutate(EnterpriseSizeClean = if_else(str_detect(tolower(ParticipantName),
+                                                    "npl manage") == T,
+                                         "PSRE",
+                                         EnterpriseSizeClean)) %>% 
     mutate(EnterpriseClass = if_else(EnterpriseSizeClean %in% c("Micro/Small",
                                                                 "Medium",
                                                                 "SME",
