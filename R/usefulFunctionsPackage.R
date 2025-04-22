@@ -284,11 +284,17 @@ transDataFunction <- function() {
   
   httr::GET(link[[1]], httr::write_disk(tf <- tempfile(fileext = ".xlsx")))
   transData1 <- read_excel(tf, .name_repair = namesFunction) %>% 
-    mutate(AwardOffered = as.numeric(AwardOffered))
+    mutate(AwardOffered = as.numeric(AwardOffered),
+           TotalCosts = as.numeric(TotalCosts),
+           ActualSpendToDate = as.numeric(ActualSpendToDate),
+           ProjectNumber = as.character(ProjectNumber))
   
   httr::GET(link[[2]], httr::write_disk(tf <- tempfile(fileext = ".xlsx")))
   transData2 <- read_excel(tf, .name_repair = namesFunction) %>% 
-    mutate(AwardOffered = as.numeric(AwardOffered))
+    mutate(AwardOffered = as.numeric(AwardOffered),
+           TotalCosts = as.numeric(TotalCosts),
+           ActualSpendToDate = as.numeric(ActualSpendToDate),
+           ProjectNumber = as.character(ProjectNumber))
   
   transData_raw <- transData1 %>% 
     bind_rows(transData2)
