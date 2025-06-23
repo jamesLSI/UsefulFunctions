@@ -927,6 +927,6 @@ update_useful_functions <- function(){
 #'  clipboard_it()
 clipboard_it <- function(data){
   
-  write.table(data, "clipboard", sep="\t", row.names=FALSE)
+  write.table(data, "clipboard-16384", sep="\t", row.names=FALSE)
   
 }
