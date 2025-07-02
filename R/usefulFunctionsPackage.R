@@ -236,7 +236,7 @@ dataWarehouse_function_specific <- function(table_choice = "Tables"){
 
     print("This could take up to a minute")
 
-    output <- DBI::dbReadTable(con, "vw_Sensitive_EDIData_JC")
+    output <- DBI::dbReadTable(con, "fact_sensitive_edireporting_applicant_pivot")
 
     edi_data <<- output
 
