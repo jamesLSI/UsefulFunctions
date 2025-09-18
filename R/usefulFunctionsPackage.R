@@ -244,7 +244,7 @@ dataWarehouse_function_specific <- function(table_choice = "Tables"){
 
   } else if (table_choice == "EDI Non Pivot") {
   
-  edi_data <- DBI::dbGetQuery(con, "
+    output <- DBI::dbGetQuery(con, "
                                 SELECT
                                 *,
                                 CAST(IsIFSApplicationLeadContact AS SIGNED) AS IsIFSApplicationLeadContact_1
@@ -254,6 +254,8 @@ dataWarehouse_function_specific <- function(table_choice = "Tables"){
     mutate(IsIFSApplicationLeadContact = if_else(IsIFSApplicationLeadContact_1 == "1",
                                                  "1",
                                                  "0"))
+  
+    edi_data <<- output
   
   } else if (table_choice == "PCF") {
 
