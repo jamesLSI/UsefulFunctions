@@ -49,6 +49,8 @@ dataWarehouse_function_specific <- function(table_choice = "Tables"){
                                     "Trans Data",
                                     "Funders",
                                     "EDI",
+                                    "EDI Pivot",
+                                    "EDI Non-Pivot",
                                     "PCF",
                                     "Warehouse"))
   start <- Sys.time()
@@ -232,14 +234,27 @@ dataWarehouse_function_specific <- function(table_choice = "Tables"){
 
     claims_forecast_data <<- output
 
-  } else if (table_choice == "EDI") {
+  } else if (table_choice == "EDI Pivot") {
 
     print("This could take up to a minute")
 
     output <- DBI::dbReadTable(con, "fact_sensitive_edireporting_applicant_pivot")
-
+    
     edi_data <<- output
 
+  } else if (table_choice == "EDI Non-Pivot") {
+  
+  edi_data <- DBI::dbGetQuery(con, "
+                                SELECT
+                                *,
+                                CAST(IsIFSApplicationLeadContact AS SIGNED) AS IsIFSApplicationLeadContact_1
+                                FROM vw_Sensitive_EDIData_DOB_Nonpivot
+                               ") %>% 
+    rename(IsIFSApplicationLeadContact_1 = ncol(.)) %>% 
+    mutate(IsIFSApplicationLeadContact = if_else(IsIFSApplicationLeadContact_1 == "1",
+                                                 "1",
+                                                 "0"))
+  
   } else if (table_choice == "PCF") {
 
     print("This could take up to a minutes")
