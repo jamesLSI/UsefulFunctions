@@ -50,7 +50,7 @@ dataWarehouse_function_specific <- function(table_choice = "Tables"){
                                     "Funders",
                                     "EDI",
                                     "EDI Pivot",
-                                    "EDI Non-Pivot",
+                                    "EDI Non Pivot",
                                     "PCF",
                                     "Warehouse"))
   start <- Sys.time()
