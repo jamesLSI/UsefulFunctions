@@ -50,7 +50,7 @@ dataWarehouse_function_specific <- function(table_choice = "Tables"){
                                     "Funders",
                                     "EDI",
                                     "EDI Pivot",
-                                    "EDI Non-Pivot",
+                                    "EDI Non Pivot",
                                     "PCF",
                                     "Warehouse"))
   start <- Sys.time()
@@ -242,7 +242,7 @@ dataWarehouse_function_specific <- function(table_choice = "Tables"){
     
     edi_data <<- output
 
-  } else if (table_choice == "EDI Non-Pivot") {
+  } else if (table_choice == "EDI Non Pivot") {
   
   edi_data <- DBI::dbGetQuery(con, "
                                 SELECT
