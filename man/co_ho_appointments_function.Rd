@@ -12,3 +12,29 @@ a tibble of appointments for a selection of officers
 \description{
 Companies House Appointments
 }
+\examples{
+Requires a tibble with the officers appointments links and a generated id column
+officer_list <- test \%>\% 
+ filter(str_detect(rowname,
+                 "items.links.officer.appointments|items.name")) \%>\% 
+ mutate(id = if_else(rowname \%in\% c("items.name","items.links.officer.appointments"),
+                     1,
+                     parse_number(str_remove_all(rowname,
+                                                 "replace with regex for punctuation")))) \%>\%
+ mutate(variable = if_else(str_detect(rowname,
+                                      "items.name"),
+                           "name",
+                           if_else(str_detect(rowname,
+                                              "items.links.officer.appointments"),
+                                   "appointments",
+                                   "error"))) \%>\% 
+ select(-rowname) \%>\% 
+ pivot_wider(names_from = variable,
+             values_from = value) \%>\% 
+ mutate(officer_id = str_remove_all(appointments,
+                                    "/officers/|/appointments")) \%>\% 
+ distinct(officer_id,
+          .keep_all = T)
+          
+co_ho_appointments_function(officer_list)
+}

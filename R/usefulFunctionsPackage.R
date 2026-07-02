@@ -768,14 +768,14 @@ survey_questions_function <- function(){
 #' @export
 #'
 #' @examples
-#' Requires a tibble with the officer's appointments links and a generated id column
+#' Requires a tibble with the officers appointments links and a generated id column
 #' officer_list <- test %>% 
 #'  filter(str_detect(rowname,
 #'                  "items.links.officer.appointments|items.name")) %>% 
 #'  mutate(id = if_else(rowname %in% c("items.name","items.links.officer.appointments"),
 #'                      1,
 #'                      parse_number(str_remove_all(rowname,
-#'                                                  "[:punct:]")))) %>%
+#'                                                  "replace with regex for punctuation")))) %>%
 #'  mutate(variable = if_else(str_detect(rowname,
 #'                                       "items.name"),
 #'                            "name",
@@ -926,9 +926,10 @@ lm_summary_table_function <- function(summary_table){
 #' update_useful_functions()
 update_useful_functions <- function(){
   detach("package:UsefulFunctions", unload=TRUE)
-  devtools::install_github("jamesLSI/UsefulFunctions",
-                           force = TRUE,
-                           upgrade = "never")
+  # devtools::install_github("jamesLSI/UsefulFunctions",
+  #                          force = TRUE,
+  #                          upgrade = "never")
+  pak::pak("jamesLSI/UsefulFunctions")
 }
 
 ### clipboard function ####
