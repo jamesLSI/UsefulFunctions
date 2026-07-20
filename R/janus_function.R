@@ -10,7 +10,7 @@
 #' @examples janus_function_specific("Applications")
 
 janus_function_specific <- function(table_choice = "Tables"){
-  
+  ### set up and tables ####
   jcon <- DBI::dbConnect(drv=RPostgres::Postgres(),
                          port     = 5432,
                          user=Sys.getenv("usernameJanus"),
@@ -41,7 +41,7 @@ janus_function_specific <- function(table_choice = "Tables"){
   start <- Sys.time()
   
   if (table_choice == "Applications") {
-    
+    ### Appliaction Data ####
     print("This could take quite a long time")
     
  
@@ -176,7 +176,7 @@ FROM
     janus_application_data <<- output
     
   } else if (table_choice == "Assessor Comments") {
-    
+    ### assessor comments ####
     print("This could take a long time")
     
     output <- DBI::dbGetQuery(jcon, "SELECT c.\"CompetitionID\" AS competitionid, 
@@ -210,7 +210,7 @@ FROM
     janus_assessor_comments <<- output
     
   } else if (table_choice == "Application Scores") {
-    
+    ### appication scores ####
     print("This could take a long time")
     
     output <- DBI::dbGetQuery(jcon, "SELECT c.\"CompetitionID\" AS competitionid, 
@@ -242,7 +242,7 @@ FROM
     janus_application_scores <<- output
     
   } else if (table_choice == "Application Questions") {
-    
+    ### application questions ####
     print("This could take a fair length of time")
     
     output <- DBI::dbGetQuery(jcon, "SELECT a.\"ApplicationID\", 
@@ -286,7 +286,7 @@ FROM
     janus_application_questions <<- output
     
   } else if (table_choice == "Projects") {
-    
+    ### projects data ####
     print("This could take up to 2 minutes")
     
 output <- dbGetQuery(jcon,
@@ -517,7 +517,7 @@ p.\"IsInGrants\",
     janus_projects_data <<- output
     
   } else if (table_choice == "Monitoring") {
-    
+    ### monitoring scores ####
     print("This could take up to 2 minutes")
     
     output <- DBI::dbGetQuery(jcon, "SELECT  
@@ -653,7 +653,7 @@ p.\"IsInGrants\",
     janus_monitoring_data <<- output
     
   } else if (table_choice == "Competitions") {
-    
+    ### competitions ####
     print("This could take up to a minute")
     
     output <- dbGetQuery(jcon,
@@ -821,7 +821,7 @@ FROM
     janus_comps_data <<- output
     
   } else if (table_choice == "Change Requests") {
-    
+    ### project change requests ####
     print("This could take up to a minute")
     
     output <- DBI::dbGetQuery(jcon, "SELECT * FROM dim_projectchangerequest WHERE \"IsActive\"=TRUE")
@@ -829,10 +829,10 @@ FROM
     janus_change_request_data <<- output
     
   } else if (table_choice == "Trans Data") {
-    
+    ### transparency data ####
     print("This could take up to a minute")
     
-    output <- dbGetQuery(jcon,"SELECT
+    output <- DBI::dbGetQuery(jcon,"SELECT
   \"CompetitionReference\",
   \"CompetitionTitle\",
   \"ProgrammeTitle\",
@@ -865,6 +865,83 @@ FROM
   \"ActivityCode\"
 FROM
   mv_report_publictransparencydata")
+    
+    output <- output |> 
+      mutate(AwardOffered = GrantOffered) |> 
+      mutate(ProjectNumber = as.character(ProjectNumber)) %>%
+      mutate(AddressRegion = if_else(AddressRegion == "Yorkshire and the Humber",
+                                     "Yorkshire and The Humber",
+                                     AddressRegion)) %>%
+      mutate(AddressRegion = if_else(AddressRegion == "Yorkshire",
+                                     "Yorkshire and The Humber",
+                                     AddressRegion)) %>%
+      mutate(AddressRegion = if_else(AddressRegion == "Outside Uk",
+                                     "Outside UK",
+                                     AddressRegion)) %>%
+      mutate(AddressRegion = if_else(AddressRegion == "Channel Islands",
+                                     "Outside UK",
+                                     AddressRegion)) %>%
+      mutate(AddressRegion = if_else(AddressRegion == "W10 5PB",
+                                     "London",
+                                     AddressRegion)) %>%
+      mutate(EnterpriseSizeClean = if_else(EnterpriseSize %in% c("Start-Up",
+                                                                 "Sole Trader",
+                                                                 "Micro/Small",
+                                                                 "Micro/small",
+                                                                 "Micro or small",
+                                                                 "Micro/ Small",
+                                                                 "Small",
+                                                                 "Micro",
+                                                                 "Industrial: SME",
+                                                                 "SME"),
+                                           "Micro/Small",
+                                           if_else(EnterpriseSize %in% c("Industrial: Large"),
+                                                   "Large",
+                                                   if_else(EnterpriseSize %in% c("Non UK",
+                                                                                 "Other",
+                                                                                 "Charity",
+                                                                                 "Unknown"),
+                                                           "Other",
+                                                           if_else(EnterpriseSize %in% c("PSO",
+                                                                                         "PSRE"),
+                                                                   "Public Sector",
+                                                                   EnterpriseSize))))) %>%
+      mutate(EnterpriseSizeClean = if_else(str_detect(tolower(ParticipantName),
+                                                      "npl manage") == T,
+                                           "PSRE",
+                                           EnterpriseSizeClean)) %>% 
+      mutate(EnterpriseClass = if_else(EnterpriseSizeClean %in% c("Micro/Small",
+                                                                  "Medium",
+                                                                  "SME",
+                                                                  "Large",
+                                                                  "Business"),
+                                       "Business",
+                                       "Other")) %>%
+      separate(AddressLEP,
+               into = c("priLep",
+                        "secondaryLep"),
+               sep = "; ",
+               remove = F) %>%
+      mutate(AddressLEP = if_else(is.na(secondaryLep),
+                                  AddressLEP,
+                                  priLep)) %>%
+      select(-priLep) %>%
+      mutate(AddressLEP = if_else(AddressLEP == "Northamptonshire",
+                                  "South East Midlands",
+                                  if_else(AddressLEP == "Herefordshire",
+                                          "The Marches",
+                                          if_else(AddressLEP == "City of London",
+                                                  "London",
+                                                  AddressLEP)))) %>%
+      mutate(ProjectNumber = as.character(ProjectNumber)) %>%
+      # filter(!ProjectStatus == "Withdrawn") %>%
+      distinct(CompetitionReference,
+               ProjectNumber,
+               ParticipantName,
+               ProjectStatus,
+               CRN,
+               AwardOffered,
+               .keep_all = T)
     
     
     janus_trans_data <<- output
