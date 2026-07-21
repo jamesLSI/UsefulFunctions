@@ -41,7 +41,7 @@ janus_function_specific <- function(table_choice = "Tables", comp_choice = ""){
   start <- Sys.time()
   
   if (table_choice == "Applications") {
-    ### Appliaction Data ####
+    ### Application Data ####
     print("This could take quite a long time")
     
  
@@ -176,42 +176,81 @@ FROM
     janus_application_data <<- output
     
   } else if (table_choice == "Assessor Comments") {
+    if(comp_choice == ""){
     ### assessor comments ####
     print("This could take a long time")
     
-    output <- DBI::dbGetQuery(jcon, "SELECT c.\"CompetitionID\" AS competitionid, 
+    output <- DBI::dbGetQuery(jcon, 
+    "SELECT c.\"CompetitionID\" AS competitionid, 
 
-   c.\"CompetitionName\" AS competitionname, 
-
-   a.\"ApplicationID\" AS applicationid, 
-
-   ass.\"AssessorNameIFS\" AS assessornameifs, 
-
-   ass.\"AssessorEmailIFS\" AS assessoremailifs, 
-
-   aq.\"QuestionNo\" AS questionno, 
-
-   ass.\"AssessorResponse\" AS assessorresponse, 
-
-   ass.\"WordCount\" AS wordcount, 
-
-   ass.\"Status\" AS status 
-
-  FROM dim_application a 
-
-    LEFT JOIN fact_assessorresponses ass ON a.\"ApplicationKey\" = ass.\"ApplicationKey\" 
-
-    LEFT JOIN dim_applicationquestion aq ON ass.\"ApplicationQuestionKey\" = aq.\"ApplicationQuestionKey\" 
-
-    LEFT JOIN dim_competition c ON c.\"CompetitionKey\" = a.\"CompetitionKey\" 
-
-  WHERE a.\"IsActive\" = true AND aq.\"IsActive\" = true") 
+       c.\"CompetitionName\" AS competitionname, 
+    
+       a.\"ApplicationID\" AS applicationid, 
+    
+       ass.\"AssessorNameIFS\" AS assessornameifs, 
+    
+       ass.\"AssessorEmailIFS\" AS assessoremailifs, 
+    
+       aq.\"QuestionNo\" AS questionno, 
+    
+       ass.\"AssessorResponse\" AS assessorresponse, 
+    
+       ass.\"WordCount\" AS wordcount, 
+    
+       ass.\"Status\" AS status 
+    
+      FROM dim_application a 
+    
+        LEFT JOIN fact_assessorresponses ass ON a.\"ApplicationKey\" = ass.\"ApplicationKey\" 
+    
+        LEFT JOIN dim_applicationquestion aq ON ass.\"ApplicationQuestionKey\" = aq.\"ApplicationQuestionKey\" 
+    
+        LEFT JOIN dim_competition c ON c.\"CompetitionKey\" = a.\"CompetitionKey\" 
+    
+      WHERE a.\"IsActive\" = true AND aq.\"IsActive\" = true") 
     
     janus_assessor_comments <<- output
     
+    } else { 
+      print("This could take a long time")
+      
+      output <- DBI::dbGetQuery(jcon, 
+                                paste0(
+      "SELECT c.\"CompetitionID\" AS competitionid, 
+
+         c.\"CompetitionName\" AS competitionname, 
+      
+         a.\"ApplicationID\" AS applicationid, 
+      
+         ass.\"AssessorNameIFS\" AS assessornameifs, 
+      
+         ass.\"AssessorEmailIFS\" AS assessoremailifs, 
+      
+         aq.\"QuestionNo\" AS questionno, 
+      
+         ass.\"AssessorResponse\" AS assessorresponse, 
+      
+         ass.\"WordCount\" AS wordcount, 
+      
+         ass.\"Status\" AS status 
+
+      FROM dim_application a 
+
+      LEFT JOIN fact_assessorresponses ass ON a.\"ApplicationKey\" = ass.\"ApplicationKey\" 
+  
+      LEFT JOIN dim_applicationquestion aq ON ass.\"ApplicationQuestionKey\" = aq.\"ApplicationQuestionKey\" 
+  
+      LEFT JOIN dim_competition c ON c.\"CompetitionKey\" = a.\"CompetitionKey\" 
+
+      WHERE a.\"IsActive\" = true AND aq.\"IsActive\" = true AND \"CompetitionID\" =", comp_choice)) 
+      
+      janus_assessor_comments <<- output
+      
+      }
+    
   } else   if (table_choice == "Application Scores") {
     if(comp_choice == ""){
-      ### appication scores ####
+      ### application scores ####
       print("This could take a long time")
       output <- DBI::dbGetQuery(jcon, "SELECT c.\"CompetitionID\" AS competitionid, 
         c.\"CompetitionName\" AS competitionname, 
@@ -238,7 +277,7 @@ FROM
     
       WHERE a.\"IsActive\" = true AND aq.\"IsActive\" = true") 
       
-      test_application_scores <<- output
+      janus_application_scores <<- output
       
     } else {
       
@@ -268,53 +307,48 @@ FROM
      LEFT JOIN dim_competition c ON c.\"CompetitionKey\" = a.\"CompetitionKey\" 
     
     WHERE a.\"IsActive\" = true AND aq.\"IsActive\" = true AND \"CompetitionID\" =", comp_choice))
-      test_application_scores <<- output
+      janus_application_scores <<- output
       
     }
     
   } else if (table_choice == "Application Questions") {
-    ### application questions ####
-    print("This could take a fair length of time")
-    
-    output <- DBI::dbGetQuery(jcon, "SELECT a.\"ApplicationID\", 
-
- 
-
-    aq.\"QuestionNo\", 
-
- 
-
-    aq.\"QuestionShortName\", 
-
- 
-
-    aq.\"QuestionName\", 
-
- 
-
-    ass.\"ApplicationResponse\", 
-
- 
-
-    ass.\"WordCount\" 
-
- 
-
-   FROM dim_application a 
-
- 
-
-     LEFT JOIN fact_applicationresponses ass ON a.\"ApplicationKey\" = ass.\"ApplicationKey\" 
-
- 
-
-     LEFT JOIN dim_applicationquestion aq ON ass.\"ApplicationQuestionKey\" = aq.\"ApplicationQuestionKey\" 
-
- 
-
-  WHERE a.\"IsActive\" = true AND aq.\"IsActive\" = true ") 
+    if(comp_choice == ""){
+      ### application questions ####
+      print("This could take a fair length of time")
+      
+      output <- DBI::dbGetQuery(jcon, 
+      "SELECT a.\"ApplicationID\", 
+        aq.\"QuestionNo\", 
+        aq.\"QuestionShortName\",
+        aq.\"QuestionName\",
+        ass.\"ApplicationResponse\",
+        ass.\"WordCount\"
+      FROM dim_application a 
+      LEFT JOIN fact_applicationresponses ass ON a.\"ApplicationKey\" = ass.\"ApplicationKey\" 
+      LEFT JOIN dim_applicationquestion aq ON ass.\"ApplicationQuestionKey\" = aq.\"ApplicationQuestionKey\" 
+      WHERE a.\"IsActive\" = true AND aq.\"IsActive\" = true ") 
     
     janus_application_questions <<- output
+    
+    } else {
+      print("This could take a fair length of time")
+      
+      output <- DBI::dbGetQuery(jcon,
+                                paste0(
+                                "SELECT a.\"ApplicationID\", 
+        aq.\"QuestionNo\", 
+        aq.\"QuestionShortName\",
+        aq.\"QuestionName\",
+        ass.\"ApplicationResponse\",
+        ass.\"WordCount\"
+      FROM dim_application a 
+      LEFT JOIN fact_applicationresponses ass ON a.\"ApplicationKey\" = ass.\"ApplicationKey\" 
+      LEFT JOIN dim_applicationquestion aq ON ass.\"ApplicationQuestionKey\" = aq.\"ApplicationQuestionKey\" 
+      WHERE a.\"IsActive\" = true AND aq.\"IsActive\" = true AND \"CompetitionID\" =", comp_choice)) 
+      
+      janus_application_questions <<- output
+      
+    }
     
   } else if (table_choice == "Projects") {
     ### projects data ####
