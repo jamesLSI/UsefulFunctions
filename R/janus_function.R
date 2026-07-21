@@ -317,7 +317,10 @@ FROM
       print("This could take a fair length of time")
       
       output <- DBI::dbGetQuery(jcon, 
-      "SELECT a.\"ApplicationID\", 
+      "SELECT c.\"CompetitionID\" AS competitionid, 
+        c.\"CompetitionName\" AS competitionname, 
+
+        a.\"ApplicationID\" AS applicationid,
         aq.\"QuestionNo\", 
         aq.\"QuestionShortName\",
         aq.\"QuestionName\",
@@ -335,7 +338,10 @@ FROM
       
       output <- DBI::dbGetQuery(jcon,
                                 paste0(
-                                "SELECT a.\"ApplicationID\", 
+                                "SELECT c.\"CompetitionID\" AS competitionid, 
+        c.\"CompetitionName\" AS competitionname, 
+
+        a.\"ApplicationID\" AS applicationid,
         aq.\"QuestionNo\", 
         aq.\"QuestionShortName\",
         aq.\"QuestionName\",
