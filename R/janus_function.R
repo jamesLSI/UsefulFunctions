@@ -9,7 +9,7 @@
 #'
 #' @examples janus_function_specific("Applications")
 
-janus_function_specific <- function(table_choice = "Tables"){
+janus_function_specific <- function(table_choice = "Tables", comp_choice = ""){
   ### set up and tables ####
   jcon <- DBI::dbConnect(drv=RPostgres::Postgres(),
                          port     = 5432,
@@ -209,37 +209,68 @@ FROM
     
     janus_assessor_comments <<- output
     
-  } else if (table_choice == "Application Scores") {
-    ### appication scores ####
-    print("This could take a long time")
+  } else   if (table_choice == "Application Scores") {
+    if(comp_choice == ""){
+      ### appication scores ####
+      print("This could take a long time")
+      output <- DBI::dbGetQuery(jcon, "SELECT c.\"CompetitionID\" AS competitionid, 
+        c.\"CompetitionName\" AS competitionname, 
+
+        a.\"ApplicationID\" AS applicationid, 
     
-    output <- DBI::dbGetQuery(jcon, "SELECT c.\"CompetitionID\" AS competitionid, 
-
-    c.\"CompetitionName\" AS competitionname, 
-
-    a.\"ApplicationID\" AS applicationid, 
-
-    ass.\"AssessorNameIFS\" AS assessornameifs, 
-
-    ass.\"AssessorEmailIFS\" AS assessoremailifs, 
-
-    aq.\"QuestionNo\" AS questionno, 
-
-    ass.\"AssessorScore\" AS assessorscore, 
-
-    ass.\"Status\" AS status 
-
-   FROM dim_application a 
+        ass.\"AssessorNameIFS\" AS assessornameifs, 
+    
+        ass.\"AssessorEmailIFS\" AS assessoremailifs, 
+    
+        aq.\"QuestionNo\" AS questionno, 
+    
+        ass.\"AssessorScore\" AS assessorscore, 
+    
+        ass.\"Status\" AS status 
+    
+       FROM dim_application a 
+    
+         LEFT JOIN fact_assessorscores ass ON a.\"ApplicationKey\" = ass.\"ApplicationKey\" 
+    
+         LEFT JOIN dim_applicationquestion aq ON ass.\"ApplicationQuestionKey\" = aq.\"ApplicationQuestionKey\" 
+    
+         LEFT JOIN dim_competition c ON c.\"CompetitionKey\" = a.\"CompetitionKey\" 
+    
+      WHERE a.\"IsActive\" = true AND aq.\"IsActive\" = true") 
+      
+      test_application_scores <<- output
+      
+    } else {
+      
+      print(comp_choice)
+      output <- DBI::dbGetQuery(jcon, 
+                                paste0("SELECT c.\"CompetitionID\" AS competitionid, 
+      c.\"CompetitionName\" AS competitionname, 
+  
+      a.\"ApplicationID\" AS applicationid, 
+  
+      ass.\"AssessorNameIFS\" AS assessornameifs, 
+  
+      ass.\"AssessorEmailIFS\" AS assessoremailifs, 
+  
+      aq.\"QuestionNo\" AS questionno, 
+  
+      ass.\"AssessorScore\" AS assessorscore, 
+  
+      ass.\"Status\" AS status 
+    
+    FROM dim_application a 
 
      LEFT JOIN fact_assessorscores ass ON a.\"ApplicationKey\" = ass.\"ApplicationKey\" 
 
      LEFT JOIN dim_applicationquestion aq ON ass.\"ApplicationQuestionKey\" = aq.\"ApplicationQuestionKey\" 
 
      LEFT JOIN dim_competition c ON c.\"CompetitionKey\" = a.\"CompetitionKey\" 
-
-  WHERE a.\"IsActive\" = true AND aq.\"IsActive\" = true") 
     
-    janus_application_scores <<- output
+    WHERE a.\"IsActive\" = true AND aq.\"IsActive\" = true AND \"CompetitionID\" =", comp_choice))
+      test_application_scores <<- output
+      
+    }
     
   } else if (table_choice == "Application Questions") {
     ### application questions ####
