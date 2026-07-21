@@ -333,6 +333,7 @@ FROM
       FROM dim_application a 
       LEFT JOIN fact_applicationresponses ass ON a.\"ApplicationKey\" = ass.\"ApplicationKey\" 
       LEFT JOIN dim_applicationquestion aq ON ass.\"ApplicationQuestionKey\" = aq.\"ApplicationQuestionKey\" 
+      LEFT JOIN dim_competition c ON c.\"CompetitionKey\" = a.\"CompetitionKey\"
       WHERE a.\"IsActive\" = true AND aq.\"IsActive\" = true ") 
     
     janus_application_questions <<- output
@@ -359,6 +360,7 @@ FROM
       FROM dim_application a 
       LEFT JOIN fact_applicationresponses ass ON a.\"ApplicationKey\" = ass.\"ApplicationKey\" 
       LEFT JOIN dim_applicationquestion aq ON ass.\"ApplicationQuestionKey\" = aq.\"ApplicationQuestionKey\" 
+      LEFT JOIN dim_competition c ON c.\"CompetitionKey\" = a.\"CompetitionKey\"
       WHERE a.\"IsActive\" = true AND aq.\"IsActive\" = true AND \"CompetitionID\" =", comp_choice)) 
       
       janus_application_questions <<- output
