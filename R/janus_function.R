@@ -318,14 +318,13 @@ FROM
       
       output <- DBI::dbGetQuery(jcon, 
       "SELECT c.\"CompetitionID\" AS competitionid, 
-<<<<<<< HEAD
         c.\"CompetitionName\" AS competitionname, 
 
         a.\"ApplicationID\" AS applicationid,
-=======
+
         c.\"CompetitionName\" AS competitionname,
         a.\"ApplicationID\", 
->>>>>>> d5fb63ff402b0184811cd686ee3b6fea4ca54f30
+
         aq.\"QuestionNo\", 
         aq.\"QuestionShortName\",
         aq.\"QuestionName\",
@@ -344,14 +343,14 @@ FROM
       output <- DBI::dbGetQuery(jcon,
                                 paste0(
                                 "SELECT c.\"CompetitionID\" AS competitionid, 
-<<<<<<< HEAD
+
         c.\"CompetitionName\" AS competitionname, 
 
         a.\"ApplicationID\" AS applicationid,
-=======
+
         c.\"CompetitionName\" AS competitionname,
         a.\"ApplicationID\", 
->>>>>>> d5fb63ff402b0184811cd686ee3b6fea4ca54f30
+
         aq.\"QuestionNo\", 
         aq.\"QuestionShortName\",
         aq.\"QuestionName\",
