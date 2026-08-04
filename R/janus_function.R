@@ -178,7 +178,7 @@ FROM
   } else if (table_choice == "Assessor Comments") {
     if(comp_choice == ""){
     ### assessor comments ####
-    print("This could take a long time")
+    print("This could take a long time, you might be better using comp_choice argument to reduce the data requested")
     
     output <- DBI::dbGetQuery(jcon, 
     "SELECT c.\"CompetitionID\" AS competitionid, 
@@ -251,7 +251,7 @@ FROM
   } else   if (table_choice == "Application Scores") {
     if(comp_choice == ""){
       ### application scores ####
-      print("This could take a long time")
+      print("This could take a long time, you might be better using comp_choice argument to reduce the data requested")
       output <- DBI::dbGetQuery(jcon, "SELECT c.\"CompetitionID\" AS competitionid, 
         c.\"CompetitionName\" AS competitionname, 
 
@@ -280,7 +280,7 @@ FROM
       janus_application_scores <<- output
       
     } else {
-      
+      print("This could take a few minutes")
       print(comp_choice)
       output <- DBI::dbGetQuery(jcon, 
                                 paste0("SELECT c.\"CompetitionID\" AS competitionid, 
@@ -314,7 +314,7 @@ FROM
   } else if (table_choice == "Application Questions") {
     if(comp_choice == ""){
       ### application questions ####
-      print("This could take a fair length of time")
+      print("This could take a long time, you might be better using comp_choice argument to reduce the data requested")
       
       output <- DBI::dbGetQuery(jcon, 
       "SELECT c.\"CompetitionID\" AS competitionid, 
