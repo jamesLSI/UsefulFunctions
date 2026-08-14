@@ -4,7 +4,7 @@
 \alias{janus_function_specific}
 \title{Janus Function}
 \usage{
-janus_function_specific(table_choice = "Tables")
+janus_function_specific(table_choice = "Tables", comp_choice = "")
 }
 \arguments{
 \item{table_choice}{is the Janus equivalent data warehouse table to return, leaving this blank will return the available tables in the console}

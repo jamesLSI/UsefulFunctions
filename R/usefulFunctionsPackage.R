@@ -948,3 +948,24 @@ clipboard_it <- function(data){
   write.table(data, "clipboard-16384", sep="\t", row.names=FALSE)
   
 }
+
+### update renviron function ####
+
+#' Updates the Renviron file in the project with the latest in the root folder
+#'
+#' @return updated renviron
+#' @export
+#'
+#' @examples
+#' Updates the Renviron file in the project with the latest in the root folder
+#' update_renviron()
+update_renviron <- function(){
+  
+  if (file.mtime(paste0(Sys.getenv("R_USER"),"/.Renviron")) > file.mtime(".Renviron")) {
+    
+    file.copy(from=paste0(Sys.getenv("R_USER"),"/.Renviron"), getwd(), 
+              overwrite = TRUE, recursive = FALSE, 
+              copy.mode = TRUE)
+  }
+  
+}
