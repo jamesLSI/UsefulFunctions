@@ -6,8 +6,7 @@
 #' @export
 #'
 #' @examples
-#' as tibble
-#' crn_list <- trans_data %>% 
+#' #' crn_list <- trans_data %>% 
 #'     distinct(Crn)
 #' clean_crn_function(crn_list)
 #' 

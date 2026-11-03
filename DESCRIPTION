@@ -3,21 +3,24 @@ Title: Innovate UK Functions Package
 Version: 1.0
 Authors@R: 
     person("James", "Currer", , "james.currer@iuk.ukri.org", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+           comment = c(ORCID = "0009-0008-4831-7169"))
 Description: This package provides useful functions for Innovate UK.
 License: `use_mit_license()`
 Depends:
     DBI,
     dplyr,
     httr,
+    janitor,
     lubridate,
+    pak,
     plotly,
     purrr,
     qualtRics,
-    R (>= 3.5),
+    R (>= 4.1.0),
     readr,
     readxl,
     RMySQL,
+    RPostgres,
     stringr,
     tibble,
     tidyr
@@ -42,5 +45,4 @@ Imports:
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-Config/roxygen2/version: 8.0.0
-RoxygenNote: 7.3.3
+Config/roxygen2/version: 8.1.0

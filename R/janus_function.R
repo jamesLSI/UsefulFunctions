@@ -8,6 +8,7 @@
 #' @export
 #'
 #' @examples janus_function_specific("Applications")
+#' A competition filter (single competition) can be added for Applications, Assessor Comments, Application Score, Application Questions, and Projects Data
 
 janus_function_specific <- function(table_choice = "Tables", comp_choice = ""){
   ### set up and tables ####
@@ -41,6 +42,7 @@ janus_function_specific <- function(table_choice = "Tables", comp_choice = ""){
   start <- Sys.time()
   
   if (table_choice == "Applications") {
+    if(comp_choice == ""){
     ### Application Data ####
     print("This could take quite a long time")
     
@@ -167,13 +169,145 @@ FROM
     \"ApplicantKey\",
     \"ApplicationKey\",
     \"CompetitionKey\"
-  )"
-                              
-                                        ) 
+  )") 
+    janus_application_data <<- output
     
+    } else { 
+    output <- DBI::dbGetQuery(
+      jcon,
+      "SELECT
+  \"ApplicationKey\",
+  applicant_data.\"ApplicationID\",
+  \"DurationInMonths\",
+  application_data.\"ApplicationTitle\",
+  \"ProjectSummary\",
+  \"PublicDescription\",
+  \"Scope\",
+  \"StartDate\",
+  \"ApplicationStatus\",
+  \"ResearchCategory\",
+  application_data.\"InnovationArea\",
+  \"CompetitionKey\",
+  \"SubmittedDate\",
+  \"FundingDecision\",
+  \"FileEntryName\",
+  \"Completion\",
+  application_data.\"Resubmission\",
+  \"PreviousApplicationNumber\",
+  application_data.\"ProjectSetUpStatus\",
+  \"CompetitionID\",
+  application_data.\"CompetitionName\",
+  \"OPEN_DATE\",
+  \"ApplicantKey\",
+  \"ApplicantOrganisationID\",
+  \"ApplicantOrganisationName\",
+  \"ApplicantOrganisationRegisteredAddress_Line1\",
+  \"ApplicantOrganisationRegisteredAddress_Line2\",
+  \"ApplicantOrganisationRegisteredAddress_Line3\",
+  \"ApplicantOrganisationRegisteredTown\",
+  \"ApplicantOrganisationRegisteredPostcode\",
+  \"ApplicantOrganisationRegisteredCounty\",
+  -- \"ApplicantOrganisationRegisteredCountry\",
+  \"ApplicantOrganisationInternationalLocation\",
+  \"ApplicantOrganisationWorkPostcode\",
+  \"ApplicantOrganisationWorkCountry\",
+  \"ApplicantOrganisationWorkRegion\",
+  \"ApplicantOrganisationWorkLongitude\",
+  \"ApplicantOrganisationWorkLatitude\",
+  \"ApplicantOrganisationWorkNuts\",
+  \"IsLead\",
+  \"ApplicantOrganisationType\",
+  \"ApplicantOrganisationSize\",
+  \"ApplicantCompanyHouseNumber\",
+  \"MainContactNameIFS\",
+  \"MainContactEmailIFS\",
+  \"CostAmount\",
+  \"FundingSought\",
+  to_char(\"OPEN_DATE\", 'YYYY-MM-DD') AS \"OPEN_DATE_clean\"
+  -- \"previous_application_id\"
+FROM
+  (
+    SELECT
+      \"CompetitionKey\",
+      MIN(\"localDate\") FILTER (
+        WHERE
+          type = 'OPEN_DATE'
+      ) AS \"OPEN_DATE\"
+    FROM
+      (
+        SELECT
+          *
+        FROM
+          (
+            SELECT DISTINCT
+              ON (f.\"CompetitionKey\", d.type) f.*,
+              d.type
+            FROM
+              (
+                SELECT
+                  *
+                FROM
+                  fact_competitionmilestone
+                ORDER BY
+                  \"localDate\" DESC
+              ) AS f
+              LEFT JOIN (
+                SELECT
+                  *
+                FROM
+                  dim_competitionmilestone
+                WHERE
+                  \"IsActive\" = TRUE
+              ) AS d USING (\"CompetitionMilestoneKey\")
+          ) AS firstjoin
+      ) AS firstpivot
+    GROUP BY
+      \"CompetitionKey\"
+  ) AS grouped
+  LEFT JOIN (
+    SELECT
+      *
+    FROM
+      dim_competition
+    WHERE
+      \"IsActive\" = TRUE
+  ) AS compdata USING (\"CompetitionKey\")
+  LEFT JOIN (
+    SELECT
+      *
+    FROM
+      dim_application
+    WHERE
+      \"IsActive\" = TRUE
+  ) AS application_data USING (\"CompetitionKey\")
+  LEFT JOIN (
+    SELECT
+      *
+    FROM
+      dim_applicant
+    WHERE
+      \"IsActive\" = TRUE
+  ) AS applicant_data USING (\"ApplicationKey\", \"CompetitionKey\")
+  LEFT JOIN (
+    SELECT
+      *
+    FROM
+      fact_applicationsummary
+  ) AS application_funding USING (
+    \"ApplicantKey\",
+    \"ApplicationKey\",
+    \"CompetitionKey\"
+  )
+WHERE
+  \"CompetitionID\" = $1",
+      params = list(comp_choice)
+      
+    )
+    janus_application_data <<- output
+    }
                                          
                                    
-    janus_application_data <<- output
+    
     
   } else if (table_choice == "Assessor Comments") {
     if(comp_choice == ""){
@@ -369,6 +503,237 @@ FROM
     
   } else if (table_choice == "Projects") {
     ### projects data ####
+    if(comp_choice == ""){
+      print("This could take up to 2 minutes")
+      
+      output <- dbGetQuery(jcon,
+                           "SELECT  
+
+        \"p\".\"ActivityCode\" AS \"ActivityCode\", 
+p.\"ActivityName\",
+p.\"CompetitionType\",
+p.\"LegacyProjectNumber\",
+p.\"ApplicationID\",
+p.\"LegacyTPNumber\",
+p.\"ProjectSummary\",
+p.\"PublicDescription\",
+p.\"ProjectDuration\",
+p.\"NumberofPeriods\",
+p.\"ClaimFrequency\",
+p.\"MonitoringReportFrequency\",
+p.\"MonitoringLevel\",
+p.\"IsFlaggedProject\",
+p.\"InnovationLeadName\",
+p.\"MonitoringOfficerName\",
+p.\"ProjectManagerName\",
+p.\"CostCentreNumber\",
+p.\"ISCFFunded\",
+p.\"CreatedDate\",
+p.\"IsOkToPublish\",
+p.\"ProjectSource\",
+p.\"IsInACC\",
+p.\"IsInGrants\",
+
+
+        \"p\".\"OpsCommitmentYear\" AS \"OpsCommitmentYear\", 
+
+        \"c\".\"CompetitionID\" AS \"CompetitionID\", 
+
+        \"p\".\"CompetitionCode\" AS \"CompetitionCode\", 
+
+        \"p\".\"CompetitionName\" AS \"CompetitionName\", 
+
+        \"p\".\"FundersPanelDate\" AS \"FundersPanelDate\", 
+
+        \"p\".\"Product\" AS \"Product\", 
+
+        \"p\".\"Theme\" AS \"Theme\", 
+
+        \"p\".\"Area\" AS \"Area\", 
+
+        \"p\".\"Sector\" AS \"Sector\", 
+
+        \"p\".\"GrandChallenge\" AS \"GrandChallenge\", 
+
+        CONCAT_WS(' - ', 
+
+                \"p\".\"CostCentreNumber\", 
+
+                \"p\".\"CostCentre\") AS \"CostCentre\", 
+
+        \"p\".\"ProjectNumber\" AS \"ProjectNumber\", 
+
+        \"pp\".\"ParticipantOrganisationName\" AS \"ParticipantOrganisationName\", 
+
+        (CASE 
+
+            WHEN (\"pp\".\"IsLeadParticipant\") THEN 'Lead' 
+
+            ELSE 'Collaborator' 
+
+        END) AS \"IsLeadParticipant\", 
+
+        \"pp\".\"ParticipantStatus\" AS \"ParticipantStatus\", 
+
+        \"p\".\"ProjectTitle\" AS \"ProjectTitle\", 
+
+        \"p\".\"ProjectStatus\" AS \"ProjectStatus\", 
+
+        \"p\".\"ProjectStartDate\" AS \"ProjectStartDate\", 
+
+        \"p\".\"ProjectEndDate\" AS \"ProjectEndDate\", 
+
+        \"olc\".\"OfferCost\" AS \"OfferCost\", 
+
+        \"olc\".\"OfferGrant\" AS \"OfferGrant\", 
+
+        \"pp\".\"AwardRate\" AS \"AwardRate\", 
+
+        (COALESCE(\"cl\".\"ClaimedToDate\", 0) + COALESCE(\"prepayment\".\"PrepaymentGrant\", 0)) AS \"ClaimedToDate\", 
+
+        COALESCE(\"cl\".\"ClaimedToDate\", 0) AS \"ClaimedToDateWithoutPrepayments\", 
+
+        COALESCE(\"prepayment\".\"PrepaymentGrant\", 0) AS \"PrepaymentsToDate\", 
+
+        COALESCE(\"pp\".\"ParticipantOrganisationSize\", 
+
+                'Unknown') AS \"ParticipantOrganisationSize\", 
+
+        COALESCE(\"pp\".\"ParticipantOrganisationType\", 
+
+                'Unknown') AS \"ParticipantOrganisationType\", 
+
+        \"pp\".\"CompanyRegistrationNumber\" AS \"CompanyRegistrationNumber\", 
+
+        \"pp\".\"MainContactName\" AS \"MainContactName\", 
+
+        \"pp\".\"MainContactEmail\" AS \"MainContactEmail\", 
+
+        \"pper\".\"PhoneWork\" AS \"MainContactPhone\", 
+
+        \"pp\".\"ParticipantAddressLine\" AS \"ParticipantAddressLine\", 
+
+        \"pp\".\"ParticipantTown\" AS \"ParticipantTown\", 
+
+        \"pp\".\"ParticipantCounty\" AS \"ParticipantCounty\", 
+
+        \"pp\".\"ParticipantPostcode\" AS \"ParticipantPostcode\", 
+
+        COALESCE(\"addr\".\"Region\", 'Unknown') AS \"Region\", 
+
+        (CASE 
+
+            WHEN (\"addr\".\"Region\" IN ('Scotland' , 'Wales', 'Northern Ireland')) THEN 'n/a' 
+
+            ELSE COALESCE(\"addr\".\"LEP\", 'Unknown') 
+
+        END) AS \"LEP\", 
+
+        \"pp\".\"ACCProjectParticipantName\" AS \"ACCSourceID\", 
+
+        (CASE 
+
+            WHEN (\"pp\".\"ConnectProjectParticipantID\" <> -(1)) THEN \"pp\".\"ConnectProjectParticipantID\" 
+
+            ELSE NULL 
+
+        END) AS \"GrantsSourceID\", 
+
+        \"pp\".\"ApplicantKey\" AS \"ApplicantKey\", 
+
+        \"pp\".\"IsFlaggedParticipant\" AS \"IsFlaggedParticipant\", 
+
+        \"pp\".\"IsOktoPublish\" AS \"IsOktoPublish\", 
+
+        \"acc\".\"SICCode\" AS \"SICCode\" 
+
+    FROM 
+
+        ((((((((\"dim_project\" \"p\" 
+
+        LEFT JOIN \"dim_projectparticipant\" \"pp\" ON ((\"p\".\"ProjectKey\" = \"pp\".\"ProjectKey\"))) 
+
+        LEFT JOIN \"dim_address\" \"addr\" ON (((\"pp\".\"AddressKey\" = \"addr\".\"AddressKey\") 
+
+            AND (\"addr\".\"IsActive\")))) 
+
+        LEFT JOIN \"dim_person\" \"pper\" ON (((\"pp\".\"MainContactPersonKey\" = \"pper\".\"PersonKey\") 
+
+            AND (\"pper\".\"IsActive\")))) 
+
+        LEFT JOIN \"dim_account\" \"acc\" ON (((\"pp\".\"AccountKey\" = \"acc\".\"AccountKey\") 
+
+            AND (\"acc\".\"IsActive\")))) 
+
+        LEFT JOIN \"dim_competition\" \"c\" ON (((\"p\".\"CompetitionKey\" = \"c\".\"CompetitionKey\") 
+
+            AND (\"c\".\"IsActive\")))) 
+
+        LEFT JOIN (SELECT DISTINCT 
+
+            \"olc\".\"ProjectParticipantKey\" AS \"ProjectParticipantKey\", 
+
+                \"olc\".\"ParticipantCost\" AS \"OfferCost\", 
+
+                \"olc\".\"ParticipantGrant\" AS \"OfferGrant\" 
+
+        FROM 
+
+            (\"fact_offerlettercost\" \"olc\" 
+
+        JOIN \"dim_offerletter\" \"ol\" ON (((\"olc\".\"OfferLetterKey\" = \"ol\".\"OfferLetterKey\") 
+
+            AND (\"ol\".\"IsActive\") 
+
+            AND (\"ol\".\"IsLatest\"))))) \"olc\" ON ((\"pp\".\"ProjectParticipantKey\" = \"olc\".\"ProjectParticipantKey\"))) 
+
+        LEFT JOIN (SELECT  
+
+            \"fact_claimsummary\".\"ProjectParticipantKey\" AS \"ProjectParticipantKey\", 
+
+                SUM(\"fact_claimsummary\".\"TotalClaimGrantApprovedForPayment\") AS \"ClaimedToDate\" 
+
+        FROM 
+
+            \"fact_claimsummary\" 
+
+        GROUP BY \"fact_claimsummary\".\"ProjectParticipantKey\") \"cl\" ON ((\"pp\".\"ProjectParticipantKey\" = \"cl\".\"ProjectParticipantKey\"))) 
+
+        LEFT JOIN (SELECT  
+
+            \"cs\".\"ProjectParticipantKey\" AS \"ProjectParticipantKey\", 
+
+                SUM(\"prep\".\"PrepaymentGrant\") AS \"PrepaymentGrant\" 
+
+        FROM 
+
+            (\"fact_claimitem\" \"prep\" 
+
+        JOIN \"fact_claimsummary\" \"cs\" ON ((\"prep\".\"ClaimSummaryKey\" = \"cs\".\"ClaimSummaryKey\"))) 
+
+        WHERE 
+
+            ((\"prep\".\"PrepaymentGrant\" <> 0) 
+
+                AND (\"prep\".\"PrepaymentClaimStatusName\" IN ('Approved' , 'Paid'))) 
+
+        GROUP BY \"cs\".\"ProjectParticipantKey\") \"prepayment\" ON ((\"pp\".\"ProjectParticipantKey\" = \"prepayment\".\"ProjectParticipantKey\"))) 
+
+    WHERE 
+
+        ((\"p\".\"IsActive\") 
+
+            AND (\"p\".\"IsInACC\") 
+
+            AND (\"pp\".\"IsActive\") 
+
+            AND (NOT \"p\".\"IsTestProject\")) 
+
+    ORDER BY \"p\".\"ActivityCode\" , \"p\".\"ProjectNumber\" , \"pp\".\"IsLeadParticipant\" DESC , \"pp\".\"ParticipantOrganisationName\"")
+      
+      janus_projects_data <<- output
+    } else {
+    
     print("This could take up to 2 minutes")
     
 output <- dbGetQuery(jcon,
@@ -592,11 +957,14 @@ p.\"IsInGrants\",
 
             AND (\"pp\".\"IsActive\") 
 
-            AND (NOT \"p\".\"IsTestProject\")) 
+            AND (NOT \"p\".\"IsTestProject\")
+            AND (\"c\".\"CompetitionID\" = $1)) 
 
-    ORDER BY \"p\".\"ActivityCode\" , \"p\".\"ProjectNumber\" , \"pp\".\"IsLeadParticipant\" DESC , \"pp\".\"ParticipantOrganisationName\"")
+    ORDER BY \"p\".\"ActivityCode\" , \"p\".\"ProjectNumber\" , \"pp\".\"IsLeadParticipant\" DESC , \"pp\".\"ParticipantOrganisationName\"",
+                  params = list(comp_choice))
     
     janus_projects_data <<- output
+    }
     
   } else if (table_choice == "Monitoring") {
     ### monitoring scores ####

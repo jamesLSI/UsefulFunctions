@@ -17,4 +17,5 @@ Janus Function
 }
 \examples{
 janus_function_specific("Applications")
+competitions can be chosen for Applications, assessor comments, application score, application questions, 
 }
