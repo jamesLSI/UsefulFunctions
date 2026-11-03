@@ -16,8 +16,7 @@ a tibble with original and cleansed crns
 CRN Cleansing Function
 }
 \examples{
-as tibble
-crn_list <- trans_data \%>\% 
+#' crn_list <- trans_data \%>\% 
     distinct(Crn)
 clean_crn_function(crn_list)
 

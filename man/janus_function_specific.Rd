@@ -17,5 +17,5 @@ Janus Function
 }
 \examples{
 janus_function_specific("Applications")
-competitions can be chosen for Applications, assessor comments, application score, application questions, 
+A competition filter (single competition) can be added for Applications, Assessor Comments, Application Score, Application Questions, and Projects Data
 }
